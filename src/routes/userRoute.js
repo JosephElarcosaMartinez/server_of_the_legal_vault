@@ -50,7 +50,6 @@ router.post(
 router.put(
   "/users/:user_id",
   verifyUser,
-  requireAdmin,
   upload.single("user_profile"),
   userController.updateUser
 );

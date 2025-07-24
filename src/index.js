@@ -25,13 +25,9 @@ app.use("/api", branchRoutes);
 app.use("/api", userRoutes);
 app.use("/api", clientRoutes);
 app.use("/api", authRoutes); // authentication api
-<<<<<<< HEAD
+
 app.use("/uploads", express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads")); // user profile uploads 
 app.use("/api", clientRoutes);
-=======
-app.use("/uploads", express.static("D:/Capstone_ni_Angelie/uploads")); // user profile uploads
->>>>>>> 26501ddeaf0e934061805403d0e9f56dca4982ba
-
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

@@ -29,6 +29,16 @@ app.use("/api", authRoutes); // authentication api
 app.use("/uploads", express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads")); // user profile uploads 
 app.use("/api", clientRoutes);
 
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Listening on port ${port}`);
+});
+
+// Testing to get the IP address of the user
+app.get("/api/ip", (req, res) => {
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] || // for reverse proxies
+    req.socket?.remoteAddress ||
+    null;
+
+  res.json({ ip });
 });

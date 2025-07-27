@@ -116,4 +116,5 @@ export const getUserLogsById = async (req, res) => {
     console.error("Error fetching user logs by ID", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
+
 };

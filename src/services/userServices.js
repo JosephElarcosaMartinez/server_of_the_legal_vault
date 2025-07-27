@@ -166,4 +166,6 @@ export const getUserLogsById = async (userId) => {
     [userId]
   );
   return rows;
+
 };
+

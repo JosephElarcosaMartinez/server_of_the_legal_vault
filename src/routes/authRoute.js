@@ -6,6 +6,7 @@ import verifyUser from "../middleware/verifyUser.js";
 
 const router = express.Router();
 
+// ✅ LOGIN ROUTE
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -35,14 +36,21 @@ router.post("/login", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
+      secure: false, // change to true in production with HTTPS
       sameSite: "Lax",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
-    // For logging user login activity
+    // Log user login activity
     await query(
-      `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile) VALUES ('Login', 'User Log', $1, $2, $3, $4)`,
+      `INSERT INTO user_log_tbl (
+        user_log_action,
+        user_log_type,
+        user_ip_address,
+        user_id,
+        user_fullname,
+        user_profile
+      ) VALUES ('Login', 'User Log', $1, $2, $3, $4)`,
       [
         req.ip,
         user.user_id,
@@ -52,6 +60,7 @@ router.post("/login", async (req, res) => {
     );
 
     delete user.user_password;
+
     res.json({ user });
   } catch (err) {
     console.error("Login error:", err);
@@ -59,7 +68,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// ✅ Session Check Route
+// ✅ VERIFY SESSION ROUTE
 router.get("/verify", verifyUser, async (req, res) => {
   try {
     const { rows } = await query("SELECT * FROM user_tbl WHERE user_id = $1", [
@@ -83,23 +92,28 @@ router.get("/verify", verifyUser, async (req, res) => {
   }
 });
 
-// For logging out
+// ✅ LOGOUT ROUTE
 router.post("/logout", verifyUser, async (req, res) => {
   try {
-    // Logging user logout activity
+    // Log user logout activity
     await query(
-      `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile) VALUES ('Logout', 'User Log', $1, $2, $3, $4)`,
+      `INSERT INTO user_log_tbl (
+        user_log_action,
+        user_log_type,
+        user_ip_address,
+        user_id,
+        user_fullname,
+        user_profile
+      ) VALUES ('Logout', 'User Log', $1, $2, $3, $4)`,
       [
         req.ip,
         req.user.user_id,
         `${req.user.user_fname} ${req.user.user_mname} ${req.user.user_lname}`,
         req.user.user_profile,
       ]
-
     );
-  } catch (err) {
-    console.error("Logout log error:", err);
-    // Don't block logout if logging fails
+
+    // Clear cookie
     res.clearCookie("token", {
       httpOnly: true,
       secure: false,
@@ -107,6 +121,18 @@ router.post("/logout", verifyUser, async (req, res) => {
     });
 
     return res.json({ message: "Logged out successfully" });
-  });
+  } catch (err) {
+    console.error("Logout log error:", err);
+
+    // Still clear cookie even if logging fails
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+    });
+
+    return res.json({ message: "Logged out with logging error" });
+  }
+});
 
 export default router;

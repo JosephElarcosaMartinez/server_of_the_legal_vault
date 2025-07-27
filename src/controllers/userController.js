@@ -60,7 +60,7 @@ export const deleteUser = async (req, res) => {
     // Optional: Delete the profile image from disk
     const user = await userService.getUserById(userId);
     if (user?.user_profile) {
-      const filePath = path.join("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/", user.user_profile);
+      const filePath = path.join("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads", user.user_profile);
       fs.unlink(filePath, (err) => {
         if (err) {
           console.warn("⚠️ Could not delete image file:", err.message);
@@ -89,6 +89,31 @@ export const searchUsers = async (req, res) => {
     res.status(200).json(users);
   } catch (err) {
     console.error("Error searching users", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// -------------------- CONTROLLER FOR USER LOGS
+
+// Fetching User Logs for Admin
+export const getUserLogs = async (req, res) => {
+  try {
+    const logs = await userService.getUserLogs();
+    res.status(200).json(logs);
+  } catch (err) {
+    console.error("Error fetching user logs", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Fetching User Logs for a Specific User
+export const getUserLogsById = async (req, res) => {
+  try {
+    const userId = req.params.user_id;
+    const logs = await userService.getUserLogsById(userId);
+    res.status(200).json(logs);
+  } catch (err) {
+    console.error("Error fetching user logs by ID", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

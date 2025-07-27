@@ -37,7 +37,8 @@ const upload = multer({
 router.get("/users", verifyUser, requireAdmin, userController.getUsers);
 router.post(
   "/users",
-  verifyUser, requireAdmin,
+  verifyUser,
+  requireAdmin,
   upload.single("user_profile"),
   userController.createUser
 );
@@ -59,5 +60,9 @@ router.get(
   requireAdmin,
   userController.searchUsers
 );
+
+// Route for fetching user logs
+router.get("/user-logs", verifyUser, requireAdmin, userController.getUserLogs);
+router.get("/user-logs/:user_id", verifyUser, userController.getUserLogsById);
 
 export default router;

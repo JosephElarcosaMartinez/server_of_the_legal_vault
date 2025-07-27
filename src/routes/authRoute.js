@@ -25,6 +25,9 @@ router.post("/login", async (req, res) => {
       {
         user_id: user.user_id,
         user_role: user.user_role,
+        user_fname: user.user_fname,
+        user_mname: user.user_mname,
+        user_lname: user.user_lname,
       },
       "jwt-secret-key",
       { expiresIn: "1d" }
@@ -36,6 +39,12 @@ router.post("/login", async (req, res) => {
       sameSite: "Lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
+
+    // for logging user activity
+    await query("INSERT INTO user_log_tbl (user_log_action, user_log_type, user_fname, user_mname, user_lname, user_ip_address) VALUES ('Login', 'User Log', $1, $2, $3, $4)", [
+      user.user_fname, user.user_mname, user.user_lname,
+      req.ip,
+    ]);
 
     delete user.user_password;
     res.json({ user });
@@ -70,7 +79,18 @@ router.get("/verify", verifyUser, async (req, res) => {
 });
 
 // For logging out
-router.post("/logout", (req, res) => {
+router.post("/logout", verifyUser, async (req, res) => {
+  try {
+    // Logging user logout activity
+    await query(
+      "INSERT INTO user_log_tbl (user_log_action, user_log_type, user_fname, user_mname, user_lname, user_ip_address) VALUES('Logout', 'User Log', $1, $2, $3, $4)",
+      [req.user.user_fname, req.user.user_mname, req.user.user_lname, req.ip]
+    );
+  } catch (err) {
+    console.error("Logout log error:", err);
+    // Don't block logout if logging fails
+  } 
+
   res.clearCookie("token", {
     httpOnly: true,
     secure: false,

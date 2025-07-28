@@ -61,7 +61,14 @@ export const getClientContacts = async () => {
 
 // Adding a new client contact
 export const createClientContact = async (contactData) => {
-  const { contact_fullname, contact_email, contact_phone, contact_role, client_id } = contactData;
+  const {
+    contact_fullname,
+    contact_email,
+    contact_phone,
+    contact_role,
+    client_id,
+  } = contactData;
+
   const { rows } = await query(
     "INSERT INTO client_contact_tbl (contact_fullname, contact_email, contact_phone, contact_role, client_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
     [contact_fullname, contact_email, contact_phone, contact_role, client_id]
@@ -71,7 +78,9 @@ export const createClientContact = async (contactData) => {
 
 // Updating an existing client contact
 export const updateClientContact = async (contact_id, contactData) => {
-  const { contact_fullname, contact_email, contact_phone, contact_role } = contactData;
+  const { contact_fullname, contact_email, contact_phone, contact_role } =
+    contactData;
+
   const { rows } = await query(
     "UPDATE client_contact_tbl SET contact_fullname = $1, contact_email = $2, contact_phone = $3, contact_role = $4 WHERE contact_id = $5 RETURNING *",
     [contact_fullname, contact_email, contact_phone, contact_role, contact_id]
@@ -82,8 +91,7 @@ export const updateClientContact = async (contact_id, contactData) => {
 // Deleting a client contact by ID
 export const deleteClientContactById = async (contact_id) => {
   const { rows } = await query(
-    "DELETE FROM client_contact_tbl WHERE cc_id = $1 RETURNING *",
-    [contact_id]
+    "DELETE FROM client_contact_tbl WHERE contact_id = $1 RETURNING *",
   );
   return rows[0];
 };

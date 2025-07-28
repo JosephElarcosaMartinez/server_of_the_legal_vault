@@ -105,7 +105,7 @@ export const createClientContact = async (req, res) => {
 // Updating an existing client contact
 export const updateClientContact = async (req, res) => {
   try {
-    const contact_id = req.params.cc_id;
+    const contact_id = req.params.contact_id;
     const contactData = req.body;
     const updatedContact = await clientService.updateClientContact(
       contact_id,
@@ -126,8 +126,10 @@ export const updateClientContact = async (req, res) => {
 // Deleting a client contact by ID
 export const deleteClientContactById = async (req, res) => {
   try {
-    const contact_id = req.params.cc_id;
-    const deletedContact = await clientService.deleteClientContactById(contact_id);
+    const contact_id = req.params.contact_id;
+    const deletedContact = await clientService.deleteClientContactById(
+      contact_id
+    );
 
     if (!deletedContact) {
       return res.status(404).json({ message: "Client contact not found" });

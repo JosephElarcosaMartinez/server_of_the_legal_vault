@@ -29,11 +29,7 @@ app.use("/api", authRoutes); // authentication api
 app.use("/uploads", express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads")); // user profile uploads 
 app.use("/api", clientRoutes);
 
-<<<<<<< HEAD
-app.listen(port, '0.0.0.0', () => {
-=======
 app.listen(port, "0.0.0.0", () => {
->>>>>>> ba22b3d0e30dfae98918cb00ba99561e8ae1039e
   console.log(`Listening on port ${port}`);
 });
 

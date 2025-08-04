@@ -172,7 +172,19 @@ router.get("/verify", verifyUser, async (req, res) => {
 // ✅ LOGOUT ROUTE
 router.post("/logout", verifyUser, async (req, res) => {
   try {
-    // Logging user logout activity
+    // Optional: Logging user logout activity
+    // await query(
+    //   `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile)
+    //    VALUES ('Logout', 'User Log', $1, $2, $3, $4)`,
+    //   [
+    //     req.ip,
+    //     req.user.user_id,
+    //     `${req.user.user_fname} ${req.user.user_mname} ${req.user.user_lname}`,
+    //     req.user.user_profile,
+    //   ]
+    // );
+
+    // ✅ Mark user as not verified
     await query(
       `INSERT INTO user_log_tbl (user_log_action, user_log_type, user_ip_address, user_id, user_fullname, user_profile) VALUES ('Logout', 'User Log', $1, $2, $3, $4)`,
       [
@@ -196,6 +208,7 @@ router.post("/logout", verifyUser, async (req, res) => {
     // Don't block logout if logging fails
   }
 
+  // ✅ Clear cookie
   res.clearCookie("token", {
     httpOnly: true,
     secure: false,

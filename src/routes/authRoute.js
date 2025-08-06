@@ -145,11 +145,8 @@ router.post("/resend-otp", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-// ✅ VERIFY SESSION ROUTE
-=======
+// VERIFY SESSION ROUTE
 // Session Check Route
->>>>>>> 8f08983803d61289ee194db98b475fc517f1f2e6
 router.get("/verify", verifyUser, async (req, res) => {
   try {
     const { rows } = await query("SELECT * FROM user_tbl WHERE user_id = $1", [

@@ -5,8 +5,16 @@ import { query } from "../db.js";
 import bcrypt from "bcrypt";
 const saltRounds = 10;
 
-// Fetching all clients
+// Fetching clients (The only ones that are not Removed)
 export const getClients = async () => {
+  const { rows } = await query(
+    "SELECT * FROM client_tbl WHERE client_status = 'Active' or client_status = 'Inactive' ORDER BY client_id ASC"
+  );
+  return rows;
+};
+
+// Fetching ALL Clients (with those Removed)
+export const getAllClients = async () => {
   const { rows } = await query(
     "SELECT * FROM client_tbl ORDER BY client_id ASC"
   );
@@ -116,6 +124,24 @@ export const getClientContacts = async () => {
   return rows;
 };
 
+// Fetching a lawyer's clients' contacts
+export const getLawyersClientContacts = async (lawyerUserId) => {
+  const { rows } = await query(
+    `
+    SELECT *
+    FROM client_contact_tbl AS cc
+    JOIN client_tbl AS c 
+        ON cc.client_id = c.client_id
+    JOIN user_tbl AS u
+        ON c.created_by = u.user_id
+    WHERE u.user_id = $1
+    `,
+    [lawyerUserId]
+  );
+
+  return rows;
+};
+
 // Adding a new client contact
 export const createClientContact = async (contactData) => {
   const {
@@ -135,12 +161,20 @@ export const createClientContact = async (contactData) => {
 
 // Updating an existing client contact
 export const updateClientContact = async (contact_id, contactData) => {
+
   const { contact_fullname, contact_email, contact_phone, contact_role } =
     contactData;
 
   const { rows } = await query(
-    "UPDATE client_contact_tbl SET contact_fullname = $1, contact_email = $2, contact_phone = $3, contact_role = $4 WHERE contact_id = $5 RETURNING *",
-    [contact_fullname, contact_email, contact_phone, contact_role, contact_id]
+    "UPDATE client_contact_tbl SET contact_fullname = $1, contact_email = $2, contact_phone = $3, contact_role = $4, client_id = $5 WHERE contact_id = $6 RETURNING *",
+    [
+      contact_fullname,
+      contact_email,
+      contact_phone,
+      contact_role,
+      client_id,
+      contact_id,
+    ]
   );
   return rows[0];
 };

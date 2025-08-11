@@ -1,9 +1,20 @@
 import * as clientService from "../services/clientServices.js";
 
-// Fetching all clients
+// Fetching clients
 export const getClients = async (req, res) => {
   try {
     const client = await clientService.getClients();
+    res.status(200).json(client);
+  } catch (err) {
+    console.error("Error fetching clients", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Fetching ALL Clients
+export const getAllClients = async (req, res) => {
+  try {
+    const client = await clientService.getAllClients();
     res.status(200).json(client);
   } catch (err) {
     console.error("Error fetching clients", err);
@@ -22,7 +33,6 @@ export const getClientsByLawyerId = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 // Adding a new client
 export const createClient = async (req, res) => {
@@ -99,6 +109,18 @@ export const getClientContacts = async (req, res) => {
     res.status(200).json(contacts);
   } catch (err) {
     console.error("Error fetching client contacts", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getLawyersClientContacts = async (req, res) => {
+  try {
+    const lawyerId = req.params.user_id;
+    const contacts = await clientService.getLawyersClientContacts(lawyerId);
+
+    res.status(200).json(contacts);
+  } catch (err) {
+    console.error("Error fetching lawyer's client contacts", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

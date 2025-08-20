@@ -60,7 +60,7 @@ export const deleteUser = async (req, res) => {
     // Optional: Delete the profile image from disk
     const user = await userService.getUserById(userId);
     if (user?.user_profile) {
-      const filePath = path.join("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE", user.user_profile);
+      const filePath = path.join("C:/Users/josep/Desktop/CAPSTONE_PROJECT", user.user_profile);
       fs.unlink(filePath, (err) => {
         if (err) {
           console.warn("⚠️ Could not delete image file:", err.message);

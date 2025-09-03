@@ -15,7 +15,7 @@ export const getUsers = async () => {
 export const createUser = async (userData) => {
   const {
     user_email,
-    user_password,
+    user_password,      
     user_fname,
     user_mname,
     user_lname,

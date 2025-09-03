@@ -1,5 +1,6 @@
 import pg from "pg";
 import env from "dotenv";
+import * as userService from "./services/userServices.js";
 
 env.config();
 
@@ -19,3 +20,14 @@ db.on("error", (err) => {
 });
 
 export const query = (text, params) => db.query(text, params);
+// -------------------- CONTROLLER FOR LAWYERS' CASE SPECIALTIES 
+
+export const getLawyersByCaseCategoryTypes = async (req, res) => {
+  try {
+    const lawyers = await userService.getLawyersByCaseCategoryTypes();
+    res.status(200).json(lawyers);
+  } catch (err) {
+    console.error("Error fetching lawyers by case category types", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};  

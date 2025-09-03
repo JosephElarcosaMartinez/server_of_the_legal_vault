@@ -116,7 +116,7 @@ export const getUserLogsById = async (req, res) => {
     console.error("Error fetching user logs by ID", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
-
+};
 // -------------------- CONTROLLER FOR LAWYERS' CASE SPECIALTIES 
 
 export const getLawyersByCaseCategoryTypes = async (req, res) => {
@@ -128,5 +128,3 @@ export const getLawyersByCaseCategoryTypes = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-

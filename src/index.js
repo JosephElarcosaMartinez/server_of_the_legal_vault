@@ -8,6 +8,7 @@ import branchRoutes from "./routes/branchRoute.js";
 import clientRoutes from "./routes/clientRoute.js";
 import caseRoutes from "./routes/caseRoute.js";
 import paymentRoutes from "./routes/paymentRoute.js";
+import taskRoutes from "./routes/taskRoute.js";
 
 const app = express();
 const port = 3000;
@@ -17,7 +18,10 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:4000",
+    origin: [
+      "http://localhost:4000",
+      "http://192.168.100.30:8081"
+    ],
     methods: ["GET", "POST", "PUT", "DELETE",],
     credentials: true,
   })
@@ -27,13 +31,11 @@ app.use("/api", branchRoutes);
 app.use("/api", userRoutes);
 app.use("/api", clientRoutes);
 app.use("/api", authRoutes); // authentication api
-
 app.use("/api", caseRoutes);
 app.use("/api", paymentRoutes);
 
-app.use("/uploads", express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads"));
-
-app.use("/api", caseRoutes);
+app.use("/api/", taskRoutes);
+app.use("/uploads", express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads")); // user profile uploads
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Listening on port ${port}`);

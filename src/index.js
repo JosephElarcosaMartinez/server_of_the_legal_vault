@@ -33,6 +33,7 @@ app.use("/api", clientRoutes);
 app.use("/api", authRoutes); // authentication api
 app.use("/api", caseRoutes);
 app.use("/api", paymentRoutes);
+app.use("/api", documentRoutes);
 
 app.use("/api/", taskRoutes);
 app.use("/uploads", express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads")); // user profile uploads

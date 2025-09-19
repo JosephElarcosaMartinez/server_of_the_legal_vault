@@ -157,7 +157,7 @@ export const createClientContact = async (contactData) => {
   } = contactData;
 
   const { rows } = await query(
-    "INSERT INTO client_contact_tbl (contact_fullname, contact_email, contact_phone, contact_role, client_id, contact_created_by) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+    "INSERT INTO client_contact_tbl (contact_fullname, contact_email, contact_phone, contact_role, client_id, contact_created_by, contact_status) VALUES ($1, $2, $3, $4, $5, $6, 'Active') RETURNING *",
     [
       contact_fullname,
       contact_email,
@@ -172,18 +172,23 @@ export const createClientContact = async (contactData) => {
 
 // Updating an existing client contact
 export const updateClientContact = async (contact_id, contactData) => {
-
-  const { contact_fullname, contact_email, contact_phone, contact_role } =
-    contactData;
-
+  const {
+    contact_fullname,
+    contact_email,
+    contact_phone,
+    contact_role,
+    client_id,
+    contact_updated_by,
+  } = contactData;
   const { rows } = await query(
-    "UPDATE client_contact_tbl SET contact_fullname = $1, contact_email = $2, contact_phone = $3, contact_role = $4, client_id = $5 WHERE contact_id = $6 RETURNING *",
+    "UPDATE client_contact_tbl SET contact_fullname = $1, contact_email = $2, contact_phone = $3, contact_role = $4, client_id = $5, contact_updated_by = $6 WHERE contact_id = $7 RETURNING *",
     [
       contact_fullname,
       contact_email,
       contact_phone,
       contact_role,
       client_id,
+      contact_updated_by,
       contact_id,
     ]
   );

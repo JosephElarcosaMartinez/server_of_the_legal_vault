@@ -10,6 +10,7 @@ import caseRoutes from "./routes/caseRoute.js";
 import paymentRoutes from "./routes/paymentRoute.js";
 import documentRoutes from "./routes/documentRoute.js";
 import notificationRoutes from "./routes/notificationRoute.js";
+import taskRoutes from "./routes/taskRoute.js";
 
 const app = express();
 const port = 3000;

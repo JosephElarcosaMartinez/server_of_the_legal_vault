@@ -194,6 +194,7 @@ export const updateClientContact = async (contact_id, contactData) => {
 export const deleteClientContactById = async (contact_id) => {
   const { rows } = await query(
     "DELETE FROM client_contact_tbl WHERE contact_id = $1 RETURNING *",
+    [contact_id]
   );
   return rows[0];
 };

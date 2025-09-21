@@ -47,17 +47,17 @@ app.use(
   "/uploads/taskedDocs",
   verifyUser,
   requireAdminOrLawyer,
-  express.static("D:/Capstone_ni_Angelie/uploads/taskedDocs")
+  express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads")
 ); // tasked document uploads (restricted)
 app.use(
   "/uploads/supportingDocs",
   verifyUser,
   requireAdminOrLawyer,
-  express.static("D:/Capstone_ni_Angelie/uploads/supportingDocs")
+  express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads/supportingDocs")
 ); // supporting document uploads (restricted)
 
 // Keep a generic uploads static for non-sensitive assets (e.g., profile images)
-app.use("/uploads", express.static("D:/Capstone_ni_Angelie/uploads"));
+app.use("/uploads", express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads"));
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Listening on port ${port}`);

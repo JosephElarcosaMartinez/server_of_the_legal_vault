@@ -13,11 +13,11 @@ const router = express.Router();
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const docType = req.body.doc_type;
-    let uploadPath = "D:/Capstone_ni_Angelie/uploads";
+    let uploadPath = "C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads";
 
     if (docType === "Task") {
       uploadPath += "/taskedDocs";
-    } else if (docType === "Supporting") {
+    } else if (docType === "Support") {
       uploadPath += "/supportingDocs";
     } else if (file.fieldname === "doc_reference") {
       uploadPath += "/referenceDocs";

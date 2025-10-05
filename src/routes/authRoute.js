@@ -11,7 +11,7 @@ env.config();
 
 const router = express.Router();
 
-// ✅ LOGIN ROUTE
+//  LOGIN ROUTE
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -213,7 +213,7 @@ router.get("/verify", verifyUser, async (req, res) => {
   }
 });
 
-// ✅ LOGOUT ROUTE
+// LOGOUT ROUTE
 router.post("/logout", verifyUser, async (req, res) => {
   try {
     // Optional: Logging user logout activity
@@ -228,13 +228,13 @@ router.post("/logout", verifyUser, async (req, res) => {
     //   ]
     // );
 
-    // ✅ Mark user as not verified
-    await query(
-      `UPDATE user_tbl SET user_is_verified = false WHERE user_id = $1`,
-      [req.user.user_id]
-    );
+    // Mark user as not verified
+    // await query(
+    //   `UPDATE user_tbl SET user_is_verified = false WHERE user_id = $1`,
+    //   [req.user.user_id]
+    // );
 
-    return res.json({ message: "Logged out successfully" });
+    console.log("User logged out:", req.user.user_id);
   } catch (err) {
 
     // Don't block logout if logging fails
@@ -242,7 +242,7 @@ router.post("/logout", verifyUser, async (req, res) => {
     console.error("Logout log or update error:", err);
   }
 
-  // ✅ Clear cookie
+  //  Clear cookie
   res.clearCookie("token", {
     httpOnly: true,
     secure: false,

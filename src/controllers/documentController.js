@@ -78,18 +78,15 @@ export const getTaskDocumentsByUser = async (req, res) => {
 export const createDocument = async (req, res) => {
   try {
     const mainFile = req.files["doc_file"] ? req.files["doc_file"][0].filename : null;
-    const references = req.files["doc_reference"] 
-      ? req.files["doc_reference"].map(f => f.filename) 
-      : [];
+    const references = reqfilesToRefs(req.files);
 
     // Save to DB
     const docData = {
       ...req.body,
-      doc_file: mainFile ? `/uploads/${req.body.doc_type === "Tasked" ? "taskedDocs" : "supportingDocs"}/${mainFile}` : null,
-      doc_reference: references.length ? JSON.stringify(references.map(f => `/uploads/referenceDocs/${f}`)) : null
+      doc_file: mainFile ? `/uploads/${req.body.doc_type === "Task" ? "taskedDocs" : "supportingDocs"}/${mainFile}` : null,
+      doc_reference: references.length ? JSON.stringify(references) : null
     };
 
-    // Call your service/DB insert
     const newDoc = await documentService.createDocument(docData);
 
     res.status(201).json(newDoc);
@@ -99,11 +96,39 @@ export const createDocument = async (req, res) => {
   }
 };
 
+function reqfilesToRefs(files) {
+  const refs = files && files["doc_reference"] ? files["doc_reference"].map(f => `/uploads/referenceDocs/${f.filename}`) : [];
+  return refs;
+}
+
 // Updating an Existing Document
 export const updateDocument = async (req, res) => {
   const { id } = req.params;
   try {
-    const updatedDoc = await documentService.updateDocument(id, req.body);
+    let body = { ...req.body };
+
+    // Optional replace of main file
+    if (req.files && req.files["doc_file"] && req.files["doc_file"][0]) {
+      const file = req.files["doc_file"][0].filename;
+      const dir = body.doc_type === "Task" ? "taskedDocs" : "supportingDocs";
+      body.doc_file = `/uploads/${dir}/${file}`;
+    }
+
+    // Merge existing kept refs + newly uploaded refs
+    const kept = (() => {
+      try {
+        return body.doc_reference_keep ? JSON.parse(body.doc_reference_keep) : [];
+      } catch {
+        return [];
+      }
+    })();
+    delete body.doc_reference_keep;
+
+    const newRefs = reqfilesToRefs(req.files);
+    const merged = [...kept, ...newRefs];
+    if (merged.length) body.doc_reference = JSON.stringify(merged);
+
+    const updatedDoc = await documentService.updateDocument(id, body);
     if (!updatedDoc) {
       return res.status(404).json({ message: "Document not found" });
     }

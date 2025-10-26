@@ -200,7 +200,7 @@ export const countAdmins = async () => {
     "SELECT COUNT(*) FROM user_tbl WHERE user_role = 'Admin'"
   );
   return parseInt(rows[0].count, 10);
-};
+};  
 
 // updateUserRoleOnly for updating user role
 export const updateUserRoleOnly = async (userId, newRole) => {

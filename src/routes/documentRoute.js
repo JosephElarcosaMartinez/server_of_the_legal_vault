@@ -81,7 +81,8 @@ router.post(
   documentController.createDocument
 );
 
-router.put("/documents/:id", verifyUser, documentController.updateDocument);
+// Add uploadFields to support file updates
+router.put("/documents/:id", verifyUser, uploadFields, documentController.updateDocument);
 
 router.delete("/documents/:id", verifyUser, documentController.deleteDocument);
 

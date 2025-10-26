@@ -55,6 +55,11 @@ app.use(
   requireAdminOrLawyer,
   express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads/supportingDocs")
 ); // supporting document uploads (restricted)
+app.use(
+  "/uploads/referenceDocs",
+  verifyUser,
+  express.static("D:/Capstone_ni_Angelie/uploads/referenceDocs")
+); 
 
 // Keep a generic uploads static for non-sensitive assets (e.g., profile images)
 app.use("/uploads", express.static("C:/Users/Lenovo i5 8th Gen/Desktop/CAPSTONE/uploads"));

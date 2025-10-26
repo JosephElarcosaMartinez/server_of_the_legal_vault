@@ -77,14 +77,24 @@ export const getTaskDocumentsByUser = async (req, res) => {
 // Creating a New Document
 export const createDocument = async (req, res) => {
   try {
-    const mainFile = req.files["doc_file"] ? req.files["doc_file"][0].filename : null;
-    const references = reqfilesToRefs(req.files);
+    const mainFile = req.files["doc_file"]
+      ? req.files["doc_file"][0].filename
+      : null;
+    const references = req.files["doc_reference"]
+      ? req.files["doc_reference"].map((f) => f.filename)
+      : [];
 
     // Save to DB
     const docData = {
       ...req.body,
-      doc_file: mainFile ? `/uploads/${req.body.doc_type === "Task" ? "taskedDocs" : "supportingDocs"}/${mainFile}` : null,
-      doc_reference: references.length ? JSON.stringify(references) : null
+      doc_file: mainFile
+        ? `/uploads/${
+            req.body.doc_type === "Tasked" ? "taskedDocs" : "supportingDocs"
+          }/${mainFile}`
+        : null,
+      doc_reference: references.length
+        ? JSON.stringify(references.map((f) => `/uploads/referenceDocs/${f}`))
+        : null,
     };
 
     const newDoc = await documentService.createDocument(docData);
@@ -105,33 +115,31 @@ function reqfilesToRefs(files) {
 export const updateDocument = async (req, res) => {
   const { id } = req.params;
   try {
-    let body = { ...req.body };
+    const body = { ...req.body };
 
-    // Optional replace of main file
-    if (req.files && req.files["doc_file"] && req.files["doc_file"][0]) {
-      const file = req.files["doc_file"][0].filename;
-      const dir = body.doc_type === "Task" ? "taskedDocs" : "supportingDocs";
-      body.doc_file = `/uploads/${dir}/${file}`;
+    const files = req.files || {}; // safely handle undefined
+
+    const mainFile = files["doc_file"]?.[0]?.filename || null;
+    const references = files["doc_reference"]?.map((f) => f.filename) || [];
+
+    if (mainFile) {
+      body.doc_file = `/uploads/${
+        req.body.doc_type === "Tasked" ? "taskedDocs" : "supportingDocs"
+      }/${mainFile}`;
     }
 
-    // Merge existing kept refs + newly uploaded refs
-    const kept = (() => {
-      try {
-        return body.doc_reference_keep ? JSON.parse(body.doc_reference_keep) : [];
-      } catch {
-        return [];
-      }
-    })();
-    delete body.doc_reference_keep;
-
-    const newRefs = reqfilesToRefs(req.files);
-    const merged = [...kept, ...newRefs];
-    if (merged.length) body.doc_reference = JSON.stringify(merged);
+    if (references.length) {
+      body.doc_reference = JSON.stringify(
+        references.map((f) => `/uploads/referenceDocs/${f}`)
+      );
+    }
 
     const updatedDoc = await documentService.updateDocument(id, body);
+
     if (!updatedDoc) {
       return res.status(404).json({ message: "Document not found" });
     }
+
     res.status(200).json(updatedDoc);
   } catch (err) {
     console.error("Error updating document:", err);
@@ -182,24 +190,22 @@ export const countProcessingDocuments = async (req, res) => {
   try {
     const count = await documentService.countProcessingDocuments();
     res.status(200).json({ count });
-  }
-  catch (err) {
+  } catch (err) {
     console.error("Error counting processing documents:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
 // count of pending task documents where the doc_status is "todo"
 export const countPendingTaskDocuments = async (req, res) => {
   try {
     const count = await documentService.countPendingTaskDocuments();
     res.status(200).json({ count });
-  }
-  catch (err) {
+  } catch (err) {
     console.error("Error counting pending task documents:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
 // count pending task documents assigned to a paralegal or staff
 export const countUserPendingTaskDocuments = async (req, res) => {
@@ -207,13 +213,8 @@ export const countUserPendingTaskDocuments = async (req, res) => {
   try {
     const count = await documentService.countUserPendingTaskDocuments(userId);
     res.status(200).json({ count });
-  }
-  catch (err) {
+  } catch (err) {
     console.error("Error counting user pending task documents:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
-}
-
-
-
-
+};
